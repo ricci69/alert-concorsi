@@ -140,26 +140,26 @@ def estrai_concorsi():
 async def invia_telegram(concorso):
     """Invia notifica via Telegram con tutti i dettagli disponibili."""
     bot = Bot(token=TELEGRAM_TOKEN)
-    message = f"🆕 *Nuovo concorso informatico!*\\n\\n"
-    message += f"📌 *{concorso['id']}*\\n"
-    message += f"🔗 {concorso['url']}\\n"
+    message = f"🆕 *Nuovo concorso informatico!*\n\n"
+    message += f"📌 *{concorso['id']}*\n"
+    message += f"🔗 {concorso['url']}\n"
     if 'ente' in concorso['dettagli']:
-        message += f"Ente: {concorso['dettagli']['ente']}\\n"
+        message += f"Ente: {concorso['dettagli']['ente']}\n"
     # Tronca i campi lunghi a 50 caratteri
     if 'scadenza' in concorso['dettagli']:
         scadenza = concorso['dettagli']['scadenza'][:50]
-        message += f"Scadenza: {scadenza}\\n"
+        message += f"Scadenza: {scadenza}\n"
     if 'localita' in concorso['dettagli']:
         localita = concorso['dettagli']['localita'][:50]
-        message += f"Località: {localita}\\n"
+        message += f"Località: {localita}\n"
     if 'occupazione' in concorso['dettagli']:
         occupazione = concorso['dettagli']['occupazione'][:50]
-        message += f"Occupazione: {occupazione}\\n"
+        message += f"Occupazione: {occupazione}\n"
     if 'posti' in concorso['dettagli']:
         posti = concorso['dettagli']['posti'][:50]
-        message += f"Posti: {posti}\\n"
+        message += f"Posti: {posti}\n"
     if 'descrizione' in concorso['dettagli']:
-        message += f"\\nDettagli:\\n{concorso['dettagli']['descrizione']}\\n"
+        message += f"\nDettagli:\n{concorso['dettagli']['descrizione']}\n"
     await bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message, parse_mode='Markdown')
 
 async def invia_avviso_telegram(testo):
