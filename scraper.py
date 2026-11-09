@@ -74,14 +74,14 @@ def save_concorsi_visti(visti_list):
         json.dump(normalized_visti[-MAX_VISTI:], f, indent=2)
 
 def estrai_concorsi():
-    """Estrae i concorsi solo dal contenitore <div class="views-rows">."""
+    """Estrae i concorsi solo dai contenitori <div class="views-rows">."""
     response = requests.get(URL)
     response.raise_for_status()  # solleva eccezione se HTTP non 200
     soup = BeautifulSoup(response.text, 'html.parser')
     concorsi = []
-    # Trova il contenitore principale
-    container = soup.find('div', class_='views-rows')
-    if container:
+    # Trova tutti i contenitori principali
+    containers = soup.find_all('div', class_='views-rows')
+    for container in containers:
         # Itera su tutti gli <h2> all'interno del container
         for item in container.find_all('h2'):
             link = item.find('a')
@@ -140,26 +140,26 @@ def estrai_concorsi():
 async def invia_telegram(concorso):
     """Invia notifica via Telegram con tutti i dettagli disponibili."""
     bot = Bot(token=TELEGRAM_TOKEN)
-    message = f"🆕 *Nuovo concorso informatico!*\n\n"
-    message += f"📌 *{concorso['id']}*\n"
-    message += f"🔗 {concorso['url']}\n"
+    message = f"🆕 *Nuovo concorso informatico!*\\n\\n"
+    message += f"📌 *{concorso['id']}*\\n"
+    message += f"🔗 {concorso['url']}\\n"
     if 'ente' in concorso['dettagli']:
-        message += f"Ente: {concorso['dettagli']['ente']}\n"
+        message += f"Ente: {concorso['dettagli']['ente']}\\n"
     # Tronca i campi lunghi a 50 caratteri
     if 'scadenza' in concorso['dettagli']:
         scadenza = concorso['dettagli']['scadenza'][:50]
-        message += f"Scadenza: {scadenza}\n"
+        message += f"Scadenza: {scadenza}\\n"
     if 'localita' in concorso['dettagli']:
         localita = concorso['dettagli']['localita'][:50]
-        message += f"Località: {localita}\n"
+        message += f"Località: {localita}\\n"
     if 'occupazione' in concorso['dettagli']:
         occupazione = concorso['dettagli']['occupazione'][:50]
-        message += f"Occupazione: {occupazione}\n"
+        message += f"Occupazione: {occupazione}\\n"
     if 'posti' in concorso['dettagli']:
         posti = concorso['dettagli']['posti'][:50]
-        message += f"Posti: {posti}\n"
+        message += f"Posti: {posti}\\n"
     if 'descrizione' in concorso['dettagli']:
-        message += f"\nDettagli:\n{concorso['dettagli']['descrizione']}\n"
+        message += f"\\nDettagli:\\n{concorso['dettagli']['descrizione']}\\n"
     await bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message, parse_mode='Markdown')
 
 async def invia_avviso_telegram(testo):
@@ -212,8 +212,8 @@ async def main():
 
         if consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
             await invia_avviso_telegram(
-                f"⚠️ <b>Avviso Scraper</b> ⚠️\n\n"
-                f"Lo scraper ha fallito <b>{MAX_CONSECUTIVE_FAILURES} volte consecutive</b>.\n"
+                f"⚠️ <b>Avviso Scraper</b> ⚠️\\n\\n"
+                f"Lo scraper ha fallito <b>{MAX_CONSECUTIVE_FAILURES} volte consecutive</b>.\\n"
                 f"Ultimo errore: <code>{error_msg}</code>"
             )
             reset_failures_counter()
@@ -227,8 +227,8 @@ async def main():
 
         if consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
             await invia_avviso_telegram(
-                f"⚠️ <b>Avviso Scraper</b> ⚠️\n\n"
-                f"Lo scraper ha fallito <b>{MAX_CONSECUTIVE_FAILURES} volte consecutive</b>.\n"
+                f"⚠️ <b>Avviso Scraper</b> ⚠️\\n\\n"
+                f"Lo scraper ha fallito <b>{MAX_CONSECUTIVE_FAILURES} volte consecutive</b>.\\n"
                 f"Ultimo errore: <code>{error_msg[:4096]}</code>"
             )
             reset_failures_counter()
